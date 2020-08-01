@@ -9,7 +9,18 @@
         "arrow-parens":"off",
         "linebreak-style": ["error", "windows"],
         "indent": ["error", "tab"],
-        "no-tabs": 0
+        "no-tabs": 0,
+        "no-mixed-spaces-and-tabs": 0,
+        "require-jsdoc": ["error", {
+            "require": {
+                "FunctionDeclaration": false,
+                "MethodDefinition": false,
+                "ClassDeclaration": false,
+                "ArrowFunctionExpression": false,
+                "FunctionExpression": false
+            }
+        }],
+        "operator-linebreak": "off"
     },
     "extends": [
         "eslint:recommended", 
