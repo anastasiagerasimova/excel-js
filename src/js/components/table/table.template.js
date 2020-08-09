@@ -4,14 +4,23 @@ const CODES = {
 };
 
 function createRow(index, content) {
-	return `<div class="row">
-                <div class="row-info">${index ? index : ''}</div>
+	const resize = index
+		? '<div class="row-resize" data-resize="row"></div>'
+		: '';
+	return `<div class="row" data-type="resizable">
+				<div class="row-info">
+					${index ? index : ''}
+					${resize}
+				</div>
                 <div class="row-data">${content}</div>
             </div>`;
 }
 
 function createColumn(col) {
-	return `<div class="column">${col}</div>`;
+	return `<div class="column" data-col="${col}" data-type="resizable">
+				${col}
+				<div class="col-resize" data-resize="col"></div>
+			</div>`;
 }
 
 // Функция, которая преобразует число в символ в соответствии с unicode
@@ -19,8 +28,12 @@ function toChar(el, index) {
 	return String.fromCharCode(CODES.A + index);
 }
 
-function createCell() {
-	return `<div class="cell" contenteditable></div>`;
+function createCell(el, index) {
+	return `<div 
+				class="cell" 
+				contenteditable 
+				data-col="${toChar(el, index)}">
+			</div>`;
 }
 
 export function createTable(rowsCount = 20) {
@@ -37,7 +50,7 @@ export function createTable(rowsCount = 20) {
 
 	const cells = new Array(colsCount)
 		.fill('')
-		.map((el) => createCell())
+		.map((el, index) => createCell(el, index))
 		.join('');
 
 	const rows = [];
