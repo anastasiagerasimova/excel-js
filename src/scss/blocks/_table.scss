@@ -72,7 +72,7 @@
         opacity: 0;
 
         &:hover{
-            opacity: 1;
+            opacity: 1 !important;
         }
     }
 
@@ -94,38 +94,5 @@
         &:hover{
             cursor: row-resize;
         }
-    }
-}
-
-.col-resize, 
-.row-resize{
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    background: #3c74ff;
-    opacity: 1;
-
-    &:hover{
-        opacity: 1;
-    }
-}
-
-.col-resize{
-    top: 0;
-    left: auto;
-    width: 2px;
-
-    &:hover{
-        cursor: col-resize;
-    }
-}
-
-.row-resize{
-    top: auto;
-    left: 0;
-    height: 2px;
-
-    &:hover{
-        cursor: row-resize;
     }
 }
