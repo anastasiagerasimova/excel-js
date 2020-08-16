@@ -19,6 +19,16 @@ class Dom {
 		return this.$el.outterHTML.trim();
 	}
 
+	text(text) {
+		// как сетттер
+		if (typeof text === 'string') {
+			this.$el.innerText = text;
+			return this;
+		}
+		// как геттер
+		return this.$el.innerText.trim();
+	}
+
 	clear() {
 		this.html('');
 		return this;
@@ -61,10 +71,41 @@ class Dom {
 		return this.$el.querySelectorAll(selector);
 	}
 
+	find(selector) {
+		return $(this.$el.querySelector(selector));
+	}
+
+	addClass(classes) {
+		this.$el.classList.add(classes);
+		return this;
+	}
+
+	removeClass(classes) {
+		this.$el.classList.remove(classes);
+		return this;
+	}
+
 	css(styles = {}) {
 		Object
 			.keys(styles)
 			.forEach(key =>this.$el.style[key]= styles[key]);
+	}
+
+	id(parse) {
+		if (parse) {
+			const ids = this.id().split(':');
+
+			return {
+				col: ids[0],
+				row: ids[1],
+			};
+		}
+		return this.$el.dataset.id;
+	}
+
+	focus() {
+		this.$el.focus();
+		return this;
 	}
 }
 
