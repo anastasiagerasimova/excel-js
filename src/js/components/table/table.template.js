@@ -24,16 +24,20 @@ function createColumn(col) {
 }
 
 // Функция, которая преобразует число в символ в соответствии с unicode
-function toChar(el, index) {
+function toChar(_, index) {
 	return String.fromCharCode(CODES.A + index);
 }
 
-function createCell(el, index) {
-	return `<div 
+function createCell(row) {
+	return function(_, index) {
+		return `<div 
 				class="cell" 
 				contenteditable 
-				data-col="${toChar(el, index)}">
-			</div>`;
+				data-type="cell"
+				data-col="${toChar(_, index)}" 
+				data-id ="${toChar(_, index)}:${row + 1}">
+				</div>`;
+	};
 }
 
 export function createTable(rowsCount = 20) {
@@ -44,20 +48,20 @@ export function createTable(rowsCount = 20) {
 		// Заполняем массив пустыми строками
 		.fill('')
 		// Преобразовываем строки в числа, числа в символы в соответствии с unicode
-		.map((el, index) => toChar(el, index))
-		.map(el => createColumn(el))
-		.join('');
-
-	const cells = new Array(colsCount)
-		.fill('')
-		.map((el, index) => createCell(el, index))
+		.map(toChar)
+		.map(createColumn)
 		.join('');
 
 	const rows = [];
 	// Создаем первую строчку таблицы
 	rows.push(createRow(null, cols));
-	for (let i = 0; i < rowsCount; i++) {
-		rows.push(createRow(i + 1, cells));
+	for (let row = 0; row < rowsCount; row++) {
+		const cells = new Array(colsCount)
+			.fill('')
+			.map(createCell(row))
+			.join('');
+
+		rows.push(createRow(row + 1, cells));
 	}
 
 	return rows.join('');
