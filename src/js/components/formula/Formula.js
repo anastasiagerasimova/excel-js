@@ -1,5 +1,6 @@
 import {ExcelComponent} from '../../core/ExcelComponent';
 import {$} from '../../core/dom';
+import {setCursorToEnd} from '../../core/utils';
 
 export class Formula extends ExcelComponent {
     static className = 'excel__formula';
@@ -9,17 +10,15 @@ export class Formula extends ExcelComponent {
     		name: 'Formula',
     		listeners: ['input', 'keydown'],
     		...options,
+    		subscribe: ['currentText'],
     	});
     }
 
     init() {
     	super.init();
-    	const input = this.$root.find('.input');
-    	this.$on('table:input', (cell)=>{
-    		input.text(cell.text());
-    	});
+    	this.$formula = this.$root.find('.input');
     	this.$on('table:select', (cell)=>{
-    		input.text(cell.text());
+    		this.$formula.text(cell.attr('data-value'));
     	});
     }
 
@@ -33,8 +32,13 @@ export class Formula extends ExcelComponent {
                 </div>`;
     }
 
+    storeChanged(changes) {
+    	this.$formula.text(changes.currentText);
+    }
+
     onInput(event) {
     	this.$emit('formula:input', $(event.target));
+    	setCursorToEnd( $(event.target));
     }
 
     onKeydown(event) {

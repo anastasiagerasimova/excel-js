@@ -62,11 +62,3 @@ export function nextSelector(event, {col, row}) {
 	return `[data-id="${col}:${row}"]`;
 }
 
-export function setCursorToEnd($node) {
-	// Получаем объект Selection
-	const sel = window.getSelection();
-	// Выделяем все дочерние узлы данного узла $node.$el
-	sel.selectAllChildren($node.$el);
-	// Схлопываем дианазон к концу выделения
-	sel.collapseToEnd();
-}

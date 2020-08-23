@@ -10,6 +10,7 @@
     display: flex;
 
     .button{
-        @include button(#188038)
+        // @include button(#188038)
+        @include button(rgb(24, 128, 56))
     }
 }
