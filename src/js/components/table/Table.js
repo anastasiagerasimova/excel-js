@@ -3,8 +3,11 @@ import {createTable} from './table.template';
 import {$} from '../../core/dom';
 import {resizeHandler} from './table.resize';
 import {shouldResize, isCell, matrix, nextSelector} from './table.function';
-import {setCursorToEnd} from './table.function';
+import {setCursorToEnd} from '../../core/utils';
 import {TableSelection} from './TableSelection';
+import * as action from '../../redux/action';
+import {defaultStyles} from '../../constants';
+import {parse} from '../../core/parse';
 
 export class Table extends ExcelComponent {
     static className = 'excel__table';
@@ -15,8 +18,6 @@ export class Table extends ExcelComponent {
     		listeners: ['mousedown', 'keydown', 'input'],
     		...options,
     	});
-
-    	this.prepare();
     }
 
     // Метод prepare будет вызываться раньше чем init,
@@ -35,27 +36,51 @@ export class Table extends ExcelComponent {
     	setCursorToEnd(this.selection.current);
 
     	this.$on('formula:input', (input)=>{
-    		this.selection.current.text(input.text());
+    		this.selection.current.attr('data-value', input.text());
+    		this.selection.current.text(parse(input.text()));
+    		this.updateTextInStore(input.text());
     	});
     	this.$on('formula:done', ()=>{
     		// Перемещеаем курсор в конец содержимого ячейки
     		setCursorToEnd(this.selection.current);
     	});
+    	this.$on('toolbar:applyStyle', (value) => {
+    		this.selection.applyStyle(value);
+    		this.$dispatch(action.applyStyle({
+    			ids: this.selection.selectedIds,
+    			value: value,
+    		}));
+    	});
     }
 
     toHTML() {
-    	return createTable();
+    	return createTable(20, this.store.getState());
     }
 
     selectCell($cell) {
     	this.selection.select($cell);
     	// Уведомляем слушателей о событии table:select
     	this.$emit('table:select', $cell);
+
+    	const styles = $cell.getStyles(Object.keys(defaultStyles));
+    	this.$dispatch(action.changeStyles(styles));
+    }
+
+    async resizeHandler(event) {
+    	const data = await resizeHandler(event, this.$root);
+    	this.$dispatch(action.tableResize(data));
+    }
+
+    updateTextInStore(text) {
+    	this.$dispatch(action.changeText({
+    		id: this.selection.current.data.id,
+    		value: text,
+    	}));
     }
 
     onMousedown(event) {
     	if (shouldResize(event)) {
-    		resizeHandler(event, this.$root);
+    		this.resizeHandler(event);
     	} else if (isCell(event)) {
     		const $target = $(event.target);
 
@@ -65,8 +90,8 @@ export class Table extends ExcelComponent {
     			const cells = ids.map((id) => this.$root.find(`[data-id="${id}"]`));
     			this.selection.selectGroup(cells);
     		} else {
-    			// this.selection.select($target);
     			this.selectCell($target);
+    			this.updateTextInStore($target.text());
     		}
     	}
     }
@@ -93,13 +118,14 @@ export class Table extends ExcelComponent {
     		const selector = nextSelector(event, id);
     		const $nextCell = this.$root.find(selector);
     		this.selectCell($nextCell);
+    		this.updateTextInStore($nextCell.text());
     		// Перемещеаем курсор в конец содержимого ячейки
     		setCursorToEnd(this.selection.current);
     	}
     }
 
     onInput(event) {
-    	this.$emit('table:input', $(event.target));
+    	this.updateTextInStore($(event.target).text());
     }
 }
 

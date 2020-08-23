@@ -1,12 +1,14 @@
 @mixin button($color){
     height: 24px;
     min-width: 24px;
+    margin-left: 1px;
     padding: 3px;
     text-align: center;
     position: relative;
     display: inline-block;
     background: rgb(255, 255, 255);
-    border: none;
+    // border: none;
+    border: 2px;
     outline: none;
     color: rgba(0, 0, 0, 0.7);
 
@@ -14,8 +16,13 @@
         font-size: 20px;
     }
 
+    :last-child{
+        margin-left: 0;
+    }
+
     &:active, &.active{
         color: $color;
+        background-color: #e6f4ea;
     }
 
     &:hover{

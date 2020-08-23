@@ -1,20 +1,25 @@
 import {$} from '../../core/dom';
-
 import {Emitter} from '../../core/Emitter';
+import {StoreSubscribe} from '../../core/StoreSubscribe';
 
 export class Excel {
 	constructor(selector, options) {
 		this.$el = $(selector);
 		this.components = options.components || [];
-		this.emitter = new Emitter;
+		this.store = options.store;
+		this.emitter = new Emitter();
+		this.subscriber = new StoreSubscribe(this.store);
 	}
 
 	getRoot() {
-		const optionsObject = {emitter: this.emitter};
+		const componentOptions = {
+			emitter: this.emitter,
+			store: this.store,
+		};
 		const $root = $.create('div', 'excel');
 		this.components = this.components.map(Component => {
 			const $el = $.create('div', Component.className);
-			const component = new Component($el, optionsObject );
+			const component = new Component($el, componentOptions);
 			// for test
 			// window[component.name] = component;
 			$el.html(component.toHTML());
@@ -28,10 +33,12 @@ export class Excel {
 	render() {
 		this.$el.append(this.getRoot());
 
+		this.subscriber.subscribeComponents(this.components);
 		this.components.forEach(component => component.init());
 	}
 
 	destroy() {
 		this.components.forEach(component => component.destroy());
+		this.subscriber.unsubscribeFromStore();
 	}
 }
