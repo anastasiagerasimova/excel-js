@@ -91,7 +91,6 @@ export class Table extends ExcelComponent {
     			this.selection.selectGroup(cells);
     		} else {
     			this.selectCell($target);
-    			this.updateTextInStore($target.text());
     		}
     	}
     }
@@ -118,7 +117,6 @@ export class Table extends ExcelComponent {
     		const selector = nextSelector(event, id);
     		const $nextCell = this.$root.find(selector);
     		this.selectCell($nextCell);
-    		this.updateTextInStore($nextCell.text());
     		// Перемещеаем курсор в конец содержимого ячейки
     		setCursorToEnd(this.selection.current);
     	}
