@@ -1,5 +1,6 @@
 # Excel на JavaScript
 
+![Stack](https://raw.githubusercontent.com/anastasiagerasimova/excel-js/assets/stack.jpg)
 ## Доступные команды
 
 * `npm install` - установить зависимости
